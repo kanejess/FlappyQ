@@ -17,13 +17,13 @@ PIPEGAPSIZE  = 200 # gap between upper and lower part of pipe
 PIPEHEIGHT   = 320
 BASEY        = SCREENHEIGHT * 0.79
 # image, sound and hitmask  dicts
-IMAGES, SOUNDS, HITMASKS = {}, {}, {}
+IMAGES, HITMASKS = {}, {}
 
-# define the RGB value for white, 
-#  green, blue colour . 
-white = (255, 255, 255) 
-green = (0, 255, 0) 
-blue = (0, 0, 128) 
+# define the RGB value for white,
+#  green, blue colour .
+white = (255, 255, 255)
+green = (0, 255, 0)
+blue = (0, 0, 128)
 
 # list of all possible players (tuple of 3 positions of flap)
 PLAYERS_LIST = (
@@ -50,7 +50,7 @@ PLAYERS_LIST = (
     (
         'assets/sprites/cat-upflap1.png',
         'assets/sprites/cat-midflap1.png',
-        'assets/sprites/cat-downflap2.png', 
+        'assets/sprites/cat-downflap2.png',
     )
 )
 
@@ -110,20 +110,7 @@ def main():
     IMAGES['level1'] = pygame.image.load('assets/sprites/select.png').convert_alpha()
     # level 2 screen
     IMAGES['level2'] = pygame.image.load('assets/sprites/restart2.png').convert_alpha()
-    
 
-
-    # sounds
-    if 'win' in sys.platform:
-        soundExt = '.wav'
-    else:
-        soundExt = '.ogg'
-
-    SOUNDS['die']    = pygame.mixer.Sound('assets/audio/die' + soundExt)
-    SOUNDS['hit']    = pygame.mixer.Sound('assets/audio/hit' + soundExt)
-    SOUNDS['point']  = pygame.mixer.Sound('assets/audio/point' + soundExt)
-    SOUNDS['swoosh'] = pygame.mixer.Sound('assets/audio/swoosh' + soundExt)
-    SOUNDS['wing']   = pygame.mixer.Sound('assets/audio/wing' + soundExt)
 
     while True:
         print("level: {}".format(LEVEL))
@@ -208,8 +195,7 @@ def showWelcomeAnimation():
                 pygame.quit()
                 sys.exit()
             if event.type == KEYDOWN and (event.key == K_SPACE or event.key == K_UP):
-                # make first flap sound and return values for mainGame
-                SOUNDS['wing'].play()
+
                 return {
                     'playery': playery + playerShmVals['val'],
                     'basex': basex,
@@ -286,7 +272,7 @@ def mainGame(movementInfo):
     # cblochs.savefig("current_sphere.png")
 
     rgates = get_random_gates(LEVEL)
-    
+
     # define gate labels
     firstGateLabel = rgates[0][0].__name__ + str(rgates[0][1])
     secondGateLabel = rgates[1][0].__name__ + str(rgates[1][1])
@@ -301,7 +287,7 @@ def mainGame(movementInfo):
                 if playery > -2 * IMAGES['player'][0].get_height():
                     playerVelY = playerFlapAcc
                     playerFlapped = True
-                    SOUNDS['wing'].play()
+
 
         # check for crash here
         crashTest = checkCrash({'x': playerx, 'y': playery, 'index': playerIndex},
@@ -323,7 +309,7 @@ def mainGame(movementInfo):
         for pipe in upperPipes:
             pipeMidPos = pipe['x'] + IMAGES['pipe'][0].get_width() / 2
             if pipeMidPos <= playerMidPos < pipeMidPos + 4:
-                
+
                 # NOTE: adding a check here for gate choice
                 if 'quantum' in pipe.keys() and pipe['quantum'] == True:
                     gateno = checkGateChoice(upperPipes[0], lowerPipes[0], playery)
@@ -350,7 +336,7 @@ def mainGame(movementInfo):
 
 
                 score += 1
-                SOUNDS['point'].play()
+
 
         # playerIndex basex change
         if (loopIter + 1) % 3 == 0:
@@ -393,16 +379,16 @@ def mainGame(movementInfo):
         # draw sprites
         SCREEN.blit(IMAGES['background'], (0,0))
 
-        for uPipe, lPipe in zip(upperPipes, lowerPipes):    
+        for uPipe, lPipe in zip(upperPipes, lowerPipes):
             if 'quantum' in uPipe.keys() and uPipe['quantum'] == True:
                 SCREEN.blit(IMAGES['quantum_pipe'][0], (uPipe['x'], uPipe['y']))
                 SCREEN.blit(IMAGES['quantum_pipe'][1], (lPipe['x'], lPipe['y']))
-                
+
                 # gate label text is written here
-                font = pygame.font.Font('freesansbold.ttf', 32) 
-                
-                upperText = font.render(firstGateLabel, True, white) 
-                lowerText = font.render(secondGateLabel, True, white) 
+                font = pygame.font.Font('freesansbold.ttf', 32)
+
+                upperText = font.render(firstGateLabel, True, white)
+                lowerText = font.render(secondGateLabel, True, white)
                 if ((uPipe['x'] == upperPipes[0]['x'] and playerx < uPipe['x']) or \
                     ('quantum' in upperPipes[1].keys() and upperPipes[1]['quantum'] == True and \
                     'quantum' in upperPipes[0].keys() and upperPipes[0]['quantum'] == False and \
@@ -415,8 +401,8 @@ def mainGame(movementInfo):
                 SCREEN.blit(IMAGES['pipe'][0], (uPipe['x'], uPipe['y']))
                 SCREEN.blit(IMAGES['pipe'][1], (lPipe['x'], lPipe['y']))
 
-        SCREEN.blit(IMAGES['base'], (basex, BASEY))        
-        
+        SCREEN.blit(IMAGES['base'], (basex, BASEY))
+
         # print score so player overlaps the score
         showScore(score)
         showState(cstate, desired_state, circuit_str)
@@ -426,7 +412,7 @@ def mainGame(movementInfo):
         visibleRot = playerRotThr
         if playerRot <= playerRotThr:
             visibleRot = playerRot
-        
+
         playerSurface = pygame.transform.rotate(IMAGES['player'][playerIndex], visibleRot)
         SCREEN.blit(playerSurface, (playerx, playery))
 
@@ -473,10 +459,6 @@ def showGameOverScreen(crashInfo):
 
     upperPipes, lowerPipes = crashInfo['upperPipes'], crashInfo['lowerPipes']
 
-    # play hit and die sounds
-    SOUNDS['hit'].play()
-    if not crashInfo['groundCrash']:
-        SOUNDS['die'].play()
 
     while True:
         for event in pygame.event.get():
